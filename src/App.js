@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 
+import mergeImages from 'merge-images';
+
 import { Dropzone } from './components/Dropzone';
 
-import mergeImages from 'merge-images';
+import { getImageWidthFromBlob } from './utils';
 
 function App() {
   const [files, setFiles] = useState([]);
@@ -136,17 +138,6 @@ const img = {
   display: 'block',
   width: 'auto',
   height: '100%',
-};
-
-const getImageWidthFromBlob = async (imageUrl) => {
-  const imgEl = new Image();
-
-  imgEl.src = imageUrl;
-
-  return new Promise((resolve, reject) => {
-    imgEl.onload = () => resolve(imgEl.naturalWidth);
-    imgEl.onerror = reject;
-  });
 };
 
 export default App;

@@ -4,55 +4,13 @@ import { Dropzone } from './components/Dropzone';
 
 import mergeImages from 'merge-images';
 
-const thumb = {
-  display: 'inline-flex',
-  borderRadius: 2,
-  border: '1px solid #eaeaea',
-  marginBottom: 8,
-  marginRight: 8,
-  width: 256,
-  height: 256,
-  padding: 4,
-  boxSizing: 'border-box',
-};
-
-const thumbInner = {
-  display: 'flex',
-  minWidth: 0,
-  overflow: 'hidden',
-};
-
-const thumbsContainer = {
-  display: 'flex',
-  flexDirection: 'row',
-  flexWrap: 'wrap',
-  marginTop: 16,
-};
-
-const img = {
-  display: 'block',
-  width: 'auto',
-  height: '100%',
-};
-
-const getImageWidthFromBlob = async (imageUrl) => {
-  const imgEl = new Image();
-
-  imgEl.src = imageUrl;
-
-  return new Promise((resolve, reject) => {
-    imgEl.onload = () => resolve(imgEl.naturalWidth);
-    imgEl.onerror = reject;
-  });
-};
-
 function App() {
   const [files, setFiles] = useState([]);
 
-  const thumbs = files.map((file) => (
-    <div style={thumb} key={file.name}>
+  const thumbs = files.map(({ name, preview }) => (
+    <div style={thumb} key={name}>
       <div style={thumbInner}>
-        <img alt={file.name} src={file.preview} style={img} />
+        <img alt={`${name} (preview)`} src={preview} style={img} />
       </div>
     </div>
   ));
@@ -148,5 +106,47 @@ function App() {
     </main>
   );
 }
+
+const thumb = {
+  display: 'inline-flex',
+  borderRadius: 2,
+  border: '1px solid #eaeaea',
+  marginBottom: 8,
+  marginRight: 8,
+  width: 256,
+  height: 256,
+  padding: 4,
+  boxSizing: 'border-box',
+};
+
+const thumbInner = {
+  display: 'flex',
+  minWidth: 0,
+  overflow: 'hidden',
+};
+
+const thumbsContainer = {
+  display: 'flex',
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  marginTop: 16,
+};
+
+const img = {
+  display: 'block',
+  width: 'auto',
+  height: '100%',
+};
+
+const getImageWidthFromBlob = async (imageUrl) => {
+  const imgEl = new Image();
+
+  imgEl.src = imageUrl;
+
+  return new Promise((resolve, reject) => {
+    imgEl.onload = () => resolve(imgEl.naturalWidth);
+    imgEl.onerror = reject;
+  });
+};
 
 export default App;

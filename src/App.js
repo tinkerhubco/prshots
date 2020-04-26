@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Dropzone } from './components/Dropzone';
 
@@ -57,29 +57,45 @@ function App() {
     </div>
   ));
 
-  const handleClick = async () => {
-    const imagePreviews = files.map(({ preview, xOffset }) => ({
-      src: preview,
-      x: xOffset,
-      y: 0,
-    }));
+  const [isDownloading, setIsDownloading] = useState(false);
 
-    const canvasWidth = files.reduce(
-      (acc, { imageWidth }) => acc + imageWidth,
-      0
-    );
+  useEffect(() => {
+    if (!isDownloading) {
+      return;
+    }
 
-    const base64Image = await mergeImages(imagePreviews, {
-      quality: 1,
-      width: canvasWidth,
-    });
+    const downloadOutput = async () => {
+      const imagePreviews = files.map(({ preview, xOffset }) => ({
+        src: preview,
+        x: xOffset,
+        y: 0,
+      }));
 
-    const a = document.createElement('a');
+      const canvasWidth = files.reduce(
+        (acc, { imageWidth }) => acc + imageWidth,
+        0
+      );
 
-    a.href = base64Image;
-    a.download = 'download.png';
+      const base64Image = await mergeImages(imagePreviews, {
+        quality: 1,
+        width: canvasWidth,
+      });
 
-    a.click();
+      const aEl = document.createElement('a');
+
+      aEl.href = base64Image;
+      aEl.download = 'download.png';
+
+      aEl.click();
+
+      setIsDownloading(false);
+    };
+
+    downloadOutput();
+  }, [files, isDownloading]);
+
+  const handleClick = () => {
+    setIsDownloading(true);
   };
 
   const showDownloadButton = !!files.length;
@@ -124,7 +140,11 @@ function App() {
         />
         <aside style={thumbsContainer}>{thumbs}</aside>
       </div>
-      {showDownloadButton && <button onClick={handleClick}>download</button>}
+      {showDownloadButton && (
+        <button disabled={isDownloading} onClick={handleClick}>{`${
+          isDownloading ? 'processing...' : 'download'
+        }`}</button>
+      )}
     </main>
   );
 }

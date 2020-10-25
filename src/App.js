@@ -6,8 +6,11 @@ import { Dropzone } from './components/Dropzone';
 
 import { getImageWidthFromBlob } from './utils';
 
+const DEFAULT_OUTPUT_FILE_NAME = 'download';
+
 function App() {
   const [files, setFiles] = useState([]);
+  const [outputFileNameFieldValue, setOutputFileNameFieldValue] = useState('');
 
   const thumbs = files.map(({ name, preview }) => (
     <div style={thumb} key={name}>
@@ -44,7 +47,7 @@ function App() {
       const aEl = document.createElement('a');
 
       aEl.href = base64Image;
-      aEl.download = 'download.png';
+      aEl.download = outputFileNameFieldValue || DEFAULT_OUTPUT_FILE_NAME;
 
       aEl.click();
 
@@ -52,7 +55,7 @@ function App() {
     };
 
     downloadOutput();
-  }, [files, isDownloading]);
+  }, [files, isDownloading, outputFileNameFieldValue]);
 
   const handleClick = () => {
     setIsDownloading(true);
@@ -101,9 +104,20 @@ function App() {
         <aside style={thumbsContainer}>{thumbs}</aside>
       </div>
       {showDownloadButton && (
-        <button disabled={isDownloading} onClick={handleClick}>{`${
-          isDownloading ? 'processing...' : 'download'
-        }`}</button>
+        <div>
+          <label for="output-file-name-field">Output file name: </label>
+          <input
+            id="output-file-name-field"
+            name="outputFileName"
+            type="text"
+            value={outputFileNameFieldValue}
+            onChange={(e) => setOutputFileNameFieldValue(e.currentTarget.value)}
+          />
+          <br />
+          <button disabled={isDownloading} onClick={handleClick}>{`${
+            isDownloading ? 'processing...' : 'download'
+          }`}</button>
+        </div>
       )}
     </main>
   );
